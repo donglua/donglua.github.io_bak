@@ -5,9 +5,8 @@ languageCode = "zh-CN"
 
 theme="hugo-octopress"
 
-params:
-  Subtitle: "Stop Stopping"
-  AuthorName: "东东鲁"
-  GitHubUser: "donglua"
-  SidebarRecentLimit: 5
+
+[params]
+  description = "Stop Stopping"
+  author = "东东鲁"
 
