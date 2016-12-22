@@ -1,0 +1,6 @@
+baseURL = "http://this.lu"
+
+title = "My New Hugo Site"
+languageCode = "en-us"
+
+theme="hugo-octopress"
