@@ -15,6 +15,7 @@ theme="hugo-octopress"
   description = "Stop Stopping"
   author = "东东鲁"
   colorscheme = "white"
+  github = "//www.github.com/donglua"
 
 [menu]
   # Shown in the side menu.
