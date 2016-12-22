@@ -6,7 +6,14 @@ languageCode = "zh-CN"
 theme="hugo-octopress"
 
 
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+
 [params]
   description = "Stop Stopping"
   author = "东东鲁"
+  bio = "Developer"
+  readMore = "阅读全文"
 
