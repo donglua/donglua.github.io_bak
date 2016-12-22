@@ -14,6 +14,19 @@ theme="hugo-octopress"
 [params]
   description = "Stop Stopping"
   author = "东东鲁"
-  bio = "Developer"
-  readMore = "阅读全文"
+  colorscheme = "white"
+
+[menu]
+  # Shown in the side menu.
+  [[menu.main]]
+    name = "Home"
+    pre = "<i class='fa fa-home fa-fw'></i>"
+    weight = 0
+    identifier = "home"
+    url = "/"
+
+
+
+
+
 
