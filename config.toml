@@ -13,9 +13,13 @@ theme="hugo-octopress"
 
 [params]
   description = "Stop Stopping"
+  defaultDescription = "Stop Stopping"
+
   author = "东东鲁"
   colorscheme = "white"
   github = "//www.github.com/donglua"
+  continueReadingText = "Would you like to know more?"
+  rss = true  # switch to true to enable RSS icon link
 
 [menu]
   # Shown in the side menu.
