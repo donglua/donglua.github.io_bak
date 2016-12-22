@@ -21,6 +21,9 @@ theme="hugo-octopress"
   continueReadingText = "Would you like to know more?"
   rss = true  # switch to true to enable RSS icon link
 
+  pygmentsuseclasses = false
+  pygmentsstyle = "solarized_dark"
+
 [menu]
   # Shown in the side menu.
   [[menu.main]]
@@ -30,6 +33,9 @@ theme="hugo-octopress"
     identifier = "home"
     url = "/"
 
+[blackfriday]
+  hrefTargetBlank = true # open the external links in a new window
+  fractions = false
 
 
 
