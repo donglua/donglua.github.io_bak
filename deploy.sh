@@ -17,4 +17,4 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin gh-pages
-git subtree push --prefix=public git@github.com:donglua/donglua.github.io.git master -f  
+git subtree push --prefix=public git@github.com:donglua/donglua.github.io.git master --force 
