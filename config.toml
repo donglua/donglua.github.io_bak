@@ -18,7 +18,7 @@ theme="hugo-octopress"
   author = "东东鲁"
   colorscheme = "white"
   github = "//www.github.com/donglua"
-  continueReadingText = "Would you like to know more?"
+  continueReadingText = "阅读全文"
   rss = true  # switch to true to enable RSS icon link
 
   pygmentsuseclasses = false
