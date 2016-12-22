@@ -1,5 +1,5 @@
 +++
-title = "structure of dex file"
+title = "Dex 文件结构"
 draft = false
 date = "2016-11-16T23:13:34+08:00"
 +++
