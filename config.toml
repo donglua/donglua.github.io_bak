@@ -1,6 +1,13 @@
 baseURL = "http://this.lu"
 
-title = "My New Hugo Site"
+title = "Donglua"
 languageCode = "zh-CN"
 
 theme="hugo-octopress"
+
+params:
+  Subtitle: "Stop Stopping"
+  AuthorName: "东东鲁"
+  GitHubUser: "donglua"
+  SidebarRecentLimit: 5
+
