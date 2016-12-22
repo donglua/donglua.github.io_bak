@@ -1,6 +1,6 @@
 baseURL = "http://this.lu"
 
 title = "My New Hugo Site"
-languageCode = "en-us"
+languageCode = "zh-CN"
 
 theme="hugo-octopress"
