@@ -126,9 +126,12 @@
 线程B：y = x;
 </code></pre>
 
-<p>线程A与线程B的通信过程如下：
-* 首先，线程A把本地内存A中更新过的共享变量刷新到主内存中去
-* 然后，线程B到主内存中去读取线程A之前已更新过的共享变量</p>
+<p>线程A与线程B的通信过程如下：</p>
+
+<ul>
+<li>首先，线程A把本地内存A中更新过的共享变量刷新到主内存中去</li>
+<li>然后，线程B到主内存中去读取线程A之前已更新过的共享变量</li>
+</ul>
 
 <p><img src="http://upload-images.jianshu.io/upload_images/11626-16bcad54fef86464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="http://ogkb67oc8.bkt.clouddn.com/12085E2E782D71368878CA2008EB5B91.png" /></p>
 
