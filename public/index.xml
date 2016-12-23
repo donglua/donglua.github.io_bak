@@ -32,9 +32,12 @@
 线程B：y = x;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;线程A与线程B的通信过程如下：
-* 首先，线程A把本地内存A中更新过的共享变量刷新到主内存中去
-* 然后，线程B到主内存中去读取线程A之前已更新过的共享变量&lt;/p&gt;
+&lt;p&gt;线程A与线程B的通信过程如下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;首先，线程A把本地内存A中更新过的共享变量刷新到主内存中去&lt;/li&gt;
+&lt;li&gt;然后，线程B到主内存中去读取线程A之前已更新过的共享变量&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://upload-images.jianshu.io/upload_images/11626-16bcad54fef86464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&#34; alt=&#34;http://ogkb67oc8.bkt.clouddn.com/12085E2E782D71368878CA2008EB5B91.png&#34; /&gt;&lt;/p&gt;
 
