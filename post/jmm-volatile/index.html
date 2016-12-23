@@ -191,8 +191,11 @@
 </tbody>
 </table>
 
-<p>上面三种情况，只要重排序两个操作的执行顺序，程序的执行结果将会被改变。
-* 所以有数据依赖性的语句不能进行重排序。</p>
+<p>上面三种情况，只要重排序两个操作的执行顺序，程序的执行结果将会被改变。</p>
+
+<ul>
+<li>所以有数据依赖性的语句不能进行重排序。</li>
+</ul>
 
 <h3 id="as-if-serial">as-if-serial</h3>
 
@@ -218,11 +221,14 @@ double area = pi * r * r; // Ⓒ
 
 <p>语义：如果A先发生于B，那么A所做的所有改变都能被B看到</p>
 
-<p>遵循的规则
-* 程序顺序规则：一个线程中的每个操作，happens- before 于该线程中的任意后续操作。
-* 监视器锁规则：对一个监视器锁的解锁，happens- before 于随后对这个监视器锁的加锁。
-* volatile变量规则：对一个volatile域的写，happens- before 于任意后续对这个volatile域的读。
-* 传递性：如果A happens- before B，且B happens- before C，那么A happens- before C。</p>
+<p>遵循的规则</p>
+
+<ul>
+<li>程序顺序规则：一个线程中的每个操作，happens- before 于该线程中的任意后续操作。</li>
+<li>监视器锁规则：对一个监视器锁的解锁，happens- before 于随后对这个监视器锁的加锁。</li>
+<li>volatile变量规则：对一个volatile域的写，happens- before 于任意后续对这个volatile域的读。</li>
+<li>传递性：如果A happens- before B，且B happens- before C，那么A happens- before C。</li>
+</ul>
 
 <h3 id="重排序对多线程的影响">重排序对多线程的影响</h3>
 
@@ -276,10 +282,13 @@ stop = true;
 
 <p>线程1在运行的时候，会将 stop 变量的值拷贝一份放在自己的工作内存当中。那么当线程2更改了 stop 变量的值之后，但是还没来得及写入主存当中，线程2转去做其他事情了，那么线程1由于不知道线程2对 stop 变量的更改，因此还会一直循环下去。</p>
 
-<p>如果加上 volatile 则不一样：
-* 使用 volatile 关键字会强制将修改的值立即写入主存。
-* 使用 volatile 关键字的话，当线程2进行修改时，会导致线程1的工作内存中缓存变量 stop 的缓存行无效。
-* 由于线程1的工作内存中缓存变量 stop 的缓存行无效，所以线程1再次读取变量 stop 的值时会去主存读取。</p>
+<p>如果加上 volatile 则不一样：</p>
+
+<ul>
+<li>使用 volatile 关键字会强制将修改的值立即写入主存。</li>
+<li>使用 volatile 关键字的话，当线程2进行修改时，会导致线程1的工作内存中缓存变量 stop 的缓存行无效。</li>
+<li>由于线程1的工作内存中缓存变量 stop 的缓存行无效，所以线程1再次读取变量 stop 的值时会去主存读取。</li>
+</ul>
 
 <p>2、禁止进行指令重排序。</p>
 

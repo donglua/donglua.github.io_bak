@@ -97,8 +97,11 @@
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;上面三种情况，只要重排序两个操作的执行顺序，程序的执行结果将会被改变。
-* 所以有数据依赖性的语句不能进行重排序。&lt;/p&gt;
+&lt;p&gt;上面三种情况，只要重排序两个操作的执行顺序，程序的执行结果将会被改变。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;所以有数据依赖性的语句不能进行重排序。&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h3 id=&#34;as-if-serial&#34;&gt;as-if-serial&lt;/h3&gt;
 
@@ -124,11 +127,14 @@ double area = pi * r * r; // Ⓒ
 
 &lt;p&gt;语义：如果A先发生于B，那么A所做的所有改变都能被B看到&lt;/p&gt;
 
-&lt;p&gt;遵循的规则
-* 程序顺序规则：一个线程中的每个操作，happens- before 于该线程中的任意后续操作。
-* 监视器锁规则：对一个监视器锁的解锁，happens- before 于随后对这个监视器锁的加锁。
-* volatile变量规则：对一个volatile域的写，happens- before 于任意后续对这个volatile域的读。
-* 传递性：如果A happens- before B，且B happens- before C，那么A happens- before C。&lt;/p&gt;
+&lt;p&gt;遵循的规则&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;程序顺序规则：一个线程中的每个操作，happens- before 于该线程中的任意后续操作。&lt;/li&gt;
+&lt;li&gt;监视器锁规则：对一个监视器锁的解锁，happens- before 于随后对这个监视器锁的加锁。&lt;/li&gt;
+&lt;li&gt;volatile变量规则：对一个volatile域的写，happens- before 于任意后续对这个volatile域的读。&lt;/li&gt;
+&lt;li&gt;传递性：如果A happens- before B，且B happens- before C，那么A happens- before C。&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h3 id=&#34;重排序对多线程的影响&#34;&gt;重排序对多线程的影响&lt;/h3&gt;
 
@@ -182,10 +188,13 @@ stop = true;
 
 &lt;p&gt;线程1在运行的时候，会将 stop 变量的值拷贝一份放在自己的工作内存当中。那么当线程2更改了 stop 变量的值之后，但是还没来得及写入主存当中，线程2转去做其他事情了，那么线程1由于不知道线程2对 stop 变量的更改，因此还会一直循环下去。&lt;/p&gt;
 
-&lt;p&gt;如果加上 volatile 则不一样：
-* 使用 volatile 关键字会强制将修改的值立即写入主存。
-* 使用 volatile 关键字的话，当线程2进行修改时，会导致线程1的工作内存中缓存变量 stop 的缓存行无效。
-* 由于线程1的工作内存中缓存变量 stop 的缓存行无效，所以线程1再次读取变量 stop 的值时会去主存读取。&lt;/p&gt;
+&lt;p&gt;如果加上 volatile 则不一样：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使用 volatile 关键字会强制将修改的值立即写入主存。&lt;/li&gt;
+&lt;li&gt;使用 volatile 关键字的话，当线程2进行修改时，会导致线程1的工作内存中缓存变量 stop 的缓存行无效。&lt;/li&gt;
+&lt;li&gt;由于线程1的工作内存中缓存变量 stop 的缓存行无效，所以线程1再次读取变量 stop 的值时会去主存读取。&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;2、禁止进行指令重排序。&lt;/p&gt;
 
