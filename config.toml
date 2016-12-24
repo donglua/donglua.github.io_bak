@@ -24,6 +24,8 @@ theme="hugo-octopress"
   pygmentsuseclasses = false
   pygmentsstyle = "solarized_dark"
 
+  disqusShortname = "thislu"
+
 [menu]
   # Shown in the side menu.
   [[menu.main]]
