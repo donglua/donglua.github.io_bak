@@ -15,11 +15,8 @@
       <pubDate>Thu, 12 Jan 2017 23:55:08 +0800</pubDate>
       
       <guid>http://this.lu/post/opengrok-deploy/</guid>
-      <description>
-
-&lt;blockquote&gt;
-&lt;p&gt;环境：Debian 8&lt;/p&gt;
-&lt;/blockquote&gt;
+      <description>&lt;p&gt;
+&amp;gt; 环境：Debian 8&lt;/p&gt;
 
 &lt;h2 id=&#34;1-安装-jdk-和-tomcat&#34;&gt;1. 安装 JDK 和 Tomcat&lt;/h2&gt;
 
@@ -131,8 +128,7 @@ server {
 
 &lt;h2 id=&#34;4-参考&#34;&gt;4. 参考&lt;/h2&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://mazhuang.org/2016/12/14/rtfsc-with-opengrok/&#34; target=&#34;_blank&#34;&gt;搭建大型源码阅读环境——使用 OpenGrok&lt;/a&gt;&lt;/p&gt;
-</description>
+&lt;p&gt;&lt;a href=&#34;http://mazhuang.org/2016/12/14/rtfsc-with-opengrok/&#34; target=&#34;_blank&#34;&gt;搭建大型源码阅读环境——使用 OpenGrok&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
