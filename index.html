@@ -95,6 +95,44 @@
         
 
 <header>
+    <p class="meta">Jan 12, 2017
+         - 1 minute read 
+         - <a href="http://this.lu/post/opengrok-deploy/#disqus_thread">Comments</a>
+
+        
+    </p>
+    <h1 class="entry-title">
+        <a href="http://this.lu/post/opengrok-deploy/">opengrok deploy</a>
+    </h1>
+</header>
+
+
+        
+          <p>环境：Debian 8
+ ##1. 安装 JDK 和 Tomcat
+Add Java 8 PPA
+sudo vim /etc/apt/sources.list.d/java-8-debian.list  添加以下内容
+deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main  导入 GPG key
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886  安装 JDK
+sudo apt-get update sudo apt-get install oracle-java8-installer  验证是否安装成功
+java -version java version &quot;1.8.0_111&quot; Java(TM) SE Runtime Environment (build 1.8.0_111-b14) Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)  安装 Tomcat</p>
+
+          
+              <footer>
+                  <a href="http://this.lu/post/opengrok-deploy/" rel="full-article">阅读全文 &rarr;</a>
+              </footer>
+          
+
+        
+
+    </article>
+    
+    <article>
+
+        
+        
+
+<header>
     <p class="meta">Dec 23, 2016
          - 2 minute read 
          - <a href="http://this.lu/post/jmm-volatile/#disqus_thread">Comments</a>
@@ -209,7 +247,7 @@
 </div>
 
 <footer role="contentinfo">
-  <p>Copyright &copy; 2016 东东鲁 - <a href="http://this.lu/license/">License</a> -
+  <p>Copyright &copy; 2017 东东鲁 - <a href="http://this.lu/license/">License</a> -
   <span class="credit">Powered by <a target="_blank" href="https://gohugo.io">Hugo</a> and <a target="_blank" href="https://github.com/parsiya/hugo-octopress/">Hugo-Octopress</a> theme.
 </p>
 
