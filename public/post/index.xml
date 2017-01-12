@@ -6,8 +6,134 @@
     <description>Recent content in Post-rsses on Donglua</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 23 Dec 2016 21:54:05 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 Jan 2017 23:55:08 +0800</lastBuildDate>
     <atom:link href="http://this.lu/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>opengrok deploy</title>
+      <link>http://this.lu/post/opengrok-deploy/</link>
+      <pubDate>Thu, 12 Jan 2017 23:55:08 +0800</pubDate>
+      
+      <guid>http://this.lu/post/opengrok-deploy/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;环境：Debian 8&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;##1. 安装 JDK 和 Tomcat&lt;/p&gt;
+
+&lt;p&gt;Add Java 8 PPA&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo vim /etc/apt/sources.list.d/java-8-debian.list
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;添加以下内容&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;导入 GPG key&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;安装 JDK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get update
+sudo apt-get install oracle-java8-installer
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;验证是否安装成功&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;java -version
+java version &amp;quot;1.8.0_111&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_111-b14)
+Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;安装 Tomcat&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install tomcat8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;配置环境变量才能启动 Tomcat&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export CATALINA_HOME=/usr/share/tomcat8/
+export OPENGROK_TOMCAT_BASE=$CATALINA_HOME
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;安装 tomcat 管理程序、文档（可选）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install tomcat8-admin tomcat8-examples tomcat8-docs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-安装-opengrok&#34;&gt;2. 安装 OpenGrok&lt;/h2&gt;
+
+&lt;p&gt;下载&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;wget https://github.com/OpenGrok/OpenGrok/files/631110/opengrok-0.13-rc5.zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;解压&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;unzip opengrok-0.13-rc5.zip
+tar xvf opengrok-0.13-rc5.tar.gz -C /var/
+cd /var
+mv /var/opengrok-0.13-rc5 opengrok
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;部署 opengrok&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./var/opengrok/bin/OpenGrok deploy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;建立索引&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir /var/opengrok/src
+./var/opengrok/bin/OpenGrok index
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最后 浏览器打开 &lt;host&gt;:8080/source 即可看到OpenGrok 的界面。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://upload-images.jianshu.io/upload_images/11626-93a3a3294beed8d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;3-使用-nginx-作为反向代理&#34;&gt;3. 使用 Nginx 作为反向代理&lt;/h2&gt;
+
+&lt;p&gt;安装 Nginx&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;配置文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;upstream backend {
+    server 127.0.0.1:8080;
+}
+
+server {
+  listen 80;
+  server_name source;
+  root /var/lib/tomcat8/webapps/;
+  index index.jsp index.html index.htm;
+
+  location / {
+     proxy_pass  http://backend/source/;
+  }
+
+  location  ~ ^/source/(.*) {
+    return 301  /$1 ;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://mazhuang.org/2016/12/14/rtfsc-with-opengrok/&#34; target=&#34;_blank&#34;&gt;搭建大型源码阅读环境——使用 OpenGrok&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Java中的重排序和 volatile 关键字</title>
