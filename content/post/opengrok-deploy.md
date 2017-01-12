@@ -1,5 +1,5 @@
 +++
-title = "opengrok deploy"
+title = "OpenGrok 部署"
 draft = false
 date = "2017-01-12T23:55:08+08:00"
 
