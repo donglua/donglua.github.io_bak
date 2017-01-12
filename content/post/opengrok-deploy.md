@@ -7,7 +7,7 @@ date = "2017-01-12T23:55:08+08:00"
 
 > 环境：Debian 8
 
-##1. 安装 JDK 和 Tomcat
+## 1. 安装 JDK 和 Tomcat
 
 Add Java 8 PPA
 ```
@@ -103,5 +103,5 @@ server {
 }
 ```
 
-## 参考
+## 4. 参考
 [搭建大型源码阅读环境——使用 OpenGrok](http://mazhuang.org/2016/12/14/rtfsc-with-opengrok/)
