@@ -99,7 +99,7 @@ server {
   }
 
   location  ~ ^/source/(.*) {
-    return 301  /$1 ;
+     return 301  /$1?$args;
   }
 }
 ```
