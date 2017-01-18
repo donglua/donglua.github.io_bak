@@ -5,6 +5,8 @@ title = "Java 8 深入剖析 | Lambda 表示式"
 
 +++
 
+<!--more-->
+
 # 1. Lambda 表达式介绍
 
 Lambda 表达式为 Java 添加了缺失的 函数式编程特性，使我们能将函数当作一等公民对待。
@@ -56,6 +58,7 @@ list.forEach(System.out::println)
 ## 方法引用的四种类型：
 
 1. 类名::静态方法名
+
 ```Java
 public class Person {
     String name;
@@ -65,19 +68,26 @@ public class Person {
     }
 }
 ```
+
 ```Java
 Arrays.sort(people, Person::compareByAge);
 ```
+
 2. 对象::实例方法名
+
 ```Java
 list.forEach(System.out::println)
 ```
+
 3. 类名::实例方法名
+
 ```Java
 String[] cities = { "guangdong", "hunan", "hebei", "beijing" };
 Arrays.sort(cities, String::compareToIgnoreCase);
 ```
+
 4. 构造方法引用
+
 ```Java
 String::new
 ```
