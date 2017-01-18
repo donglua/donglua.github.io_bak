@@ -215,7 +215,7 @@ server {
   }
 
   location  ~ ^/source/(.*) {
-    return 301  /$1 ;
+     return 301  /$1?$args;
   }
 }
 </code></pre>
@@ -245,6 +245,8 @@ server {
         <a class="basic-alignment left" href="http://this.lu/post/jmm-volatile/" title="Java中的重排序和 volatile 关键字">Java中的重排序和 volatile 关键字</a>
     
 
+    
+      <a class="basic-alignment right" href="http://this.lu/post/java_8_lambda/" title="Java 8 深入剖析 | Lambda 表示式">Java 8 深入剖析 | Lambda 表示式</a>
     
   </p>
   

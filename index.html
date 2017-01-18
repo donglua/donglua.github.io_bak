@@ -95,6 +95,43 @@
         
 
 <header>
+    <p class="meta">Jan 18, 2017
+         - 1 minute read 
+         - <a href="http://this.lu/post/java_8_lambda/#disqus_thread">Comments</a>
+
+        
+    </p>
+    <h1 class="entry-title">
+        <a href="http://this.lu/post/java_8_lambda/">Java 8 深入剖析 | Lambda 表示式</a>
+    </h1>
+</header>
+
+
+        
+          <p>1. Lambda 表达式介绍 Lambda 表达式为 Java 添加了缺失的 函数式编程特性，使我们能将函数当作一等公民对待。
+在将函数作为一等公民的语言中，Lambda 表达式的类型是函数。而在 Java 中，Lambda 表达式是对象，他们必须依附于一类特别的对象类型 —— 函数式接口（FunctionalInterface）。
+ 函数式接口 * 如果一个接口只有一个抽象方法，那么该接口是一个函数式接口 * 如果我们在某个接口上声明了 FunctionalInterface 注解，那么编译器就会按照函数式接口的定义来要求该接口 * 如果一个接口只有一个抽象方法，但没有给该接口声明 FunctionalInterface 注解，那么编译器依旧会将该接口看成函数式接口
+ Lamdba 表达式是一种匿名函数；它是没有声明的方法，即没有访问修饰符、返回值声明和名字。
+Lambda 表达式的作用是传递行为，而不仅仅是值。提升了抽象层次，API 重用性更好，更加灵活。
+2. Lambda 表示式基本语法 (arg1, arg2...) -&gt; { body } (type1 arg1, type2 arg2...) -&gt; { body }  示例：
+ (int a, int b) -&gt; { return a + b; } (String s) -&gt; System.out.println(s); a -&gt; return a * a; () -&gt; 43; () -&gt; { return 3.</p>
+
+          
+              <footer>
+                  <a href="http://this.lu/post/java_8_lambda/" rel="full-article">阅读全文 &rarr;</a>
+              </footer>
+          
+
+        
+
+    </article>
+    
+    <article>
+
+        
+        
+
+<header>
     <p class="meta">Jan 12, 2017
          - 1 minute read 
          - <a href="http://this.lu/post/opengrok-deploy/#disqus_thread">Comments</a>

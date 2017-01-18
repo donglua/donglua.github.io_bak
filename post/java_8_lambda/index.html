@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1">
+
+  
+  
+  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  
+
+  
+  <title>Java 8 深入剖析 | Lambda 表示式</title>
+
+  
+  
+  <link rel="stylesheet" href="http://this.lu/css/hugo-octopress.css">
+
+  
+  
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+  
+  <link href="http://this.lu/favicon.png" rel="icon">
+
+  
+  
+  
+
+  
+
+  <meta name="description" content="Stop Stopping">
+  <meta name="keywords" content="">
+
+  <meta name="author" content="东东鲁">
+
+  
+  <meta name="generator" content="Hugo 0.17" />
+
+  
+  
+
+</head>
+<body>
+
+
+<header role="banner"><hgroup>
+  
+  <h1><a href="http://this.lu/">Donglua</a></h1>
+    <h2></h2>
+</hgroup></header>
+
+
+<nav role="navigation">
+
+<ul class="main-navigation">
+  
+  
+    
+      <li><a href="http://this.lu/" title="Home">Home</a></li>
+    
+  
+</ul>
+
+
+<ul class="subscription">
+  
+    
+        <a href="http://this.lu/index.xml" target="_blank" type="application/rss+xml" title="RSS"><i class="fa fa-rss-square fa-lg"></i></a>
+    
+  
+
+</ul>
+
+
+</nav>
+
+
+<div id="main">
+  <div id="content">
+    <div>
+      <article class="hentry" role="article">
+
+        
+        
+
+<header>
+    <p class="meta">Jan 18, 2017
+         - 1 minute read 
+         - <a href="http://this.lu/post/java_8_lambda/#disqus_thread">Comments</a>
+
+        
+    </p>
+    <h1 class="entry-title">
+         Java 8 深入剖析 | Lambda 表示式 
+    </h1>
+</header>
+
+
+        <div class="entry-content">
+          
+          
+          
+          
+
+<h1 id="1-lambda-表达式介绍">1. Lambda 表达式介绍</h1>
+
+<p>Lambda 表达式为 Java 添加了缺失的 函数式编程特性，使我们能将函数当作一等公民对待。</p>
+
+<p>在将函数作为一等公民的语言中，Lambda 表达式的类型是函数。而在 Java 中，<strong>Lambda 表达式是对象</strong>，他们必须依附于一类特别的对象类型 —— <strong>函数式接口（FunctionalInterface）</strong>。</p>
+
+<blockquote>
+<p>函数式接口
+* 如果一个接口只有一个抽象方法，那么该接口是一个函数式接口
+* 如果我们在某个接口上声明了 FunctionalInterface 注解，那么编译器就会按照函数式接口的定义来要求该接口
+* 如果一个接口只有一个抽象方法，但没有给该接口声明 FunctionalInterface 注解，那么编译器依旧会将该接口看成函数式接口</p>
+</blockquote>
+
+<p>Lamdba 表达式是一种匿名函数；它是没有声明的方法，即没有访问修饰符、返回值声明和名字。</p>
+
+<p>Lambda 表达式的作用是传递行为，而不仅仅是值。提升了抽象层次，API 重用性更好，更加灵活。</p>
+
+<h1 id="2-lambda-表示式基本语法">2. Lambda 表示式基本语法</h1>
+
+<pre><code class="language-Java">(arg1, arg2...) -&gt; { body }
+
+(type1 arg1, type2 arg2...) -&gt; { body }
+</code></pre>
+
+<p>示例：</p>
+
+<ul>
+<li><code>(int a, int b) -&gt; { return a + b; }</code></li>
+<li><code>(String s) -&gt; System.out.println(s);</code></li>
+<li><code>a -&gt; return a * a;</code></li>
+<li><code>() -&gt; 43;</code></li>
+<li><code>() -&gt; { return 3.14; }</code>
+&gt; 1. 一个 Lambda 表达式可以有零个或多个参数
+&gt; 2. 参数的类型可以明确声明，也可以根据上下文来推断。比如<code>(String s)</code>可以省略为<code>(s)</code>
+&gt; 3. 所有参数须包含在圆括号内，参数之间用逗号相隔。当只有一个参数且其类型可推导时，圆括号可省略，比如 <code>a -&gt; return a * a;</code>
+&gt; 4. 空圆括号代表参数集为空。比如 <code>() -&gt; 43;</code>
+&gt; 5. Lambda 表达式的主体可包含零条或多条语句。如果 Lambda 表达式的主体只有一条语句，花括号<code>{}</code>可省略。匿名函数的返回值类型与该主体表达式一致。
+&gt; 6. 如果 Lambda 表达式的主体包含一条以上语句，则表达式必须包含在花括号<code>{}</code>中（形成代码块）。匿名函数的返回值类型与代码块的返回类型一致，若没有则为空。</li>
+</ul>
+
+<h1 id="3-方法引用">3. 方法引用</h1>
+
+<blockquote>
+<p>方法引用（Method References）实际上是 Lambda 表达式的一种语法糖。我可以将方法引用看作是一个“函数指针”（指向一个函数的指针）。</p>
+</blockquote>
+
+<p>例如：</p>
+
+<pre><code class="language-Java">list.forEach(item -&gt; System.out.println(item))
+</code></pre>
+
+<p>可以改为使用方法引用：</p>
+
+<pre><code class="language-Java">list.forEach(System.out::println)
+</code></pre>
+
+<h2 id="方法引用的四种类型">方法引用的四种类型：</h2>
+
+<ol>
+<li>类名::静态方法名
+<code>Java
+public class Person {
+String name;
+LocalDate birthday;
+public static int compareByAge(Person a,Person b){
+    return a.birthday.compareTo(b.birthday);
+}
+}
+</code>
+<code>Java
+Arrays.sort(people, Person::compareByAge);
+</code></li>
+<li>对象::实例方法名
+<code>Java
+list.forEach(System.out::println)
+</code></li>
+<li>类名::实例方法名
+<code>Java
+String[] cities = { &quot;guangdong&quot;, &quot;hunan&quot;, &quot;hebei&quot;, &quot;beijing&quot; };
+Arrays.sort(cities, String::compareToIgnoreCase);
+</code></li>
+<li>构造方法引用
+<code>Java
+String::new
+</code></li>
+</ol>
+
+        </div>
+        
+
+<footer>
+  <p class="meta">
+    <span class="byline author vcard">Posted by <span class="fn">东东鲁</span></span>
+    
+    <time>Jan 18, 2017</time>
+    
+    </span>
+  </p>
+
+  
+  
+
+  
+
+  <p class="meta">
+    
+        <a class="basic-alignment left" href="http://this.lu/post/opengrok-deploy/" title="OpenGrok 部署">OpenGrok 部署</a>
+    
+
+    
+  </p>
+  
+    
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    
+    
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'thislu';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    
+  
+</footer>
+
+      </article>
+    </div>
+    
+
+<aside class="sidebar thirds">
+  <section class="first odd">
+
+    
+
+    <p>
+      
+    </p>
+  </section>
+
+
+
+  
+  <ul class="sidebar-nav">
+    <li class="sidebar-nav-item">
+      <a target="_blank" href="//www.github.com/donglua" title="//www.github.com/donglua"><i class="fa fa-github fa-3x"></i></a>
+      
+      
+      
+       
+      
+      
+      
+      
+      
+      
+
+    
+    
+    </li>
+  </ul>
+
+  
+
+  
+
+  
+  
+  
+
+</aside>
+
+  </div>
+</div>
+
+<footer role="contentinfo">
+  <p>Copyright &copy; 2017 东东鲁 - <a href="http://this.lu/license/">License</a> -
+  <span class="credit">Powered by <a target="_blank" href="https://gohugo.io">Hugo</a> and <a target="_blank" href="https://github.com/parsiya/hugo-octopress/">Hugo-Octopress</a> theme.
+</p>
+
+</footer>
+
+
+</body>
+</html>
+
