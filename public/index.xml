@@ -6,8 +6,105 @@
     <description>Recent content on Donglua</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 12 Jan 2017 23:55:08 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 18 Jan 2017 14:40:44 +0800</lastBuildDate>
     <atom:link href="http://this.lu/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Java 8 深入剖析 | Lambda 表示式</title>
+      <link>http://this.lu/post/java_8_lambda/</link>
+      <pubDate>Wed, 18 Jan 2017 14:40:44 +0800</pubDate>
+      
+      <guid>http://this.lu/post/java_8_lambda/</guid>
+      <description>
+
+&lt;h1 id=&#34;1-lambda-表达式介绍&#34;&gt;1. Lambda 表达式介绍&lt;/h1&gt;
+
+&lt;p&gt;Lambda 表达式为 Java 添加了缺失的 函数式编程特性，使我们能将函数当作一等公民对待。&lt;/p&gt;
+
+&lt;p&gt;在将函数作为一等公民的语言中，Lambda 表达式的类型是函数。而在 Java 中，&lt;strong&gt;Lambda 表达式是对象&lt;/strong&gt;，他们必须依附于一类特别的对象类型 —— &lt;strong&gt;函数式接口（FunctionalInterface）&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;函数式接口
+* 如果一个接口只有一个抽象方法，那么该接口是一个函数式接口
+* 如果我们在某个接口上声明了 FunctionalInterface 注解，那么编译器就会按照函数式接口的定义来要求该接口
+* 如果一个接口只有一个抽象方法，但没有给该接口声明 FunctionalInterface 注解，那么编译器依旧会将该接口看成函数式接口&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Lamdba 表达式是一种匿名函数；它是没有声明的方法，即没有访问修饰符、返回值声明和名字。&lt;/p&gt;
+
+&lt;p&gt;Lambda 表达式的作用是传递行为，而不仅仅是值。提升了抽象层次，API 重用性更好，更加灵活。&lt;/p&gt;
+
+&lt;h1 id=&#34;2-lambda-表示式基本语法&#34;&gt;2. Lambda 表示式基本语法&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;(arg1, arg2...) -&amp;gt; { body }
+
+(type1 arg1, type2 arg2...) -&amp;gt; { body }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;示例：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;(int a, int b) -&amp;gt; { return a + b; }&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;(String s) -&amp;gt; System.out.println(s);&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;a -&amp;gt; return a * a;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;() -&amp;gt; 43;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;() -&amp;gt; { return 3.14; }&lt;/code&gt;
+&amp;gt; 1. 一个 Lambda 表达式可以有零个或多个参数
+&amp;gt; 2. 参数的类型可以明确声明，也可以根据上下文来推断。比如&lt;code&gt;(String s)&lt;/code&gt;可以省略为&lt;code&gt;(s)&lt;/code&gt;
+&amp;gt; 3. 所有参数须包含在圆括号内，参数之间用逗号相隔。当只有一个参数且其类型可推导时，圆括号可省略，比如 &lt;code&gt;a -&amp;gt; return a * a;&lt;/code&gt;
+&amp;gt; 4. 空圆括号代表参数集为空。比如 &lt;code&gt;() -&amp;gt; 43;&lt;/code&gt;
+&amp;gt; 5. Lambda 表达式的主体可包含零条或多条语句。如果 Lambda 表达式的主体只有一条语句，花括号&lt;code&gt;{}&lt;/code&gt;可省略。匿名函数的返回值类型与该主体表达式一致。
+&amp;gt; 6. 如果 Lambda 表达式的主体包含一条以上语句，则表达式必须包含在花括号&lt;code&gt;{}&lt;/code&gt;中（形成代码块）。匿名函数的返回值类型与代码块的返回类型一致，若没有则为空。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;3-方法引用&#34;&gt;3. 方法引用&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;方法引用（Method References）实际上是 Lambda 表达式的一种语法糖。我可以将方法引用看作是一个“函数指针”（指向一个函数的指针）。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;list.forEach(item -&amp;gt; System.out.println(item))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以改为使用方法引用：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;list.forEach(System.out::println)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;方法引用的四种类型&#34;&gt;方法引用的四种类型：&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;类名::静态方法名
+&lt;code&gt;Java
+public class Person {
+String name;
+LocalDate birthday;
+public static int compareByAge(Person a,Person b){
+    return a.birthday.compareTo(b.birthday);
+}
+}
+&lt;/code&gt;
+&lt;code&gt;Java
+Arrays.sort(people, Person::compareByAge);
+&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;对象::实例方法名
+&lt;code&gt;Java
+list.forEach(System.out::println)
+&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;类名::实例方法名
+&lt;code&gt;Java
+String[] cities = { &amp;quot;guangdong&amp;quot;, &amp;quot;hunan&amp;quot;, &amp;quot;hebei&amp;quot;, &amp;quot;beijing&amp;quot; };
+Arrays.sort(cities, String::compareToIgnoreCase);
+&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;构造方法引用
+&lt;code&gt;Java
+String::new
+&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>OpenGrok 部署</title>
@@ -121,7 +218,7 @@ server {
   }
 
   location  ~ ^/source/(.*) {
-    return 301  /$1 ;
+     return 301  /$1?$args;
   }
 }
 &lt;/code&gt;&lt;/pre&gt;
