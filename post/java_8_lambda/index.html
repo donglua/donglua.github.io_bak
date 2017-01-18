@@ -109,7 +109,7 @@
           
           
           
-          
+          <p></p>
 
 <h1 id="1-lambda-表达式介绍">1. Lambda 表达式介绍</h1>
 
@@ -170,34 +170,42 @@
 <h2 id="方法引用的四种类型">方法引用的四种类型：</h2>
 
 <ol>
-<li>类名::静态方法名
-<code>Java
-public class Person {
-String name;
-LocalDate birthday;
-public static int compareByAge(Person a,Person b){
-    return a.birthday.compareTo(b.birthday);
-}
-}
-</code>
-<code>Java
-Arrays.sort(people, Person::compareByAge);
-</code></li>
-<li>对象::实例方法名
-<code>Java
-list.forEach(System.out::println)
-</code></li>
-<li>类名::实例方法名
-<code>Java
-String[] cities = { &quot;guangdong&quot;, &quot;hunan&quot;, &quot;hebei&quot;, &quot;beijing&quot; };
-Arrays.sort(cities, String::compareToIgnoreCase);
-</code></li>
-<li>构造方法引用
-<code>Java
-String::new
-</code></li>
+<li>类名::静态方法名</li>
 </ol>
 
+<pre><code class="language-Java">public class Person {
+    String name;
+    LocalDate birthday;
+    public static int compareByAge(Person a,Person b){
+        return a.birthday.compareTo(b.birthday);
+    }
+}
+</code></pre>
+
+<pre><code class="language-Java">Arrays.sort(people, Person::compareByAge);
+</code></pre>
+
+<ol>
+<li>对象::实例方法名</li>
+</ol>
+
+<pre><code class="language-Java">list.forEach(System.out::println)
+</code></pre>
+
+<ol>
+<li>类名::实例方法名</li>
+</ol>
+
+<pre><code class="language-Java">String[] cities = { &quot;guangdong&quot;, &quot;hunan&quot;, &quot;hebei&quot;, &quot;beijing&quot; };
+Arrays.sort(cities, String::compareToIgnoreCase);
+</code></pre>
+
+<ol>
+<li>构造方法引用</li>
+</ol>
+
+<pre><code class="language-Java">String::new
+</code></pre>
         </div>
         
 
