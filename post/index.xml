@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Donglua</title>
-    <link>http://this.lu/post/index.xml</link>
+    <link>http://donglua.github.io/post/index.xml</link>
     <description>Recent content in Posts on Donglua</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Wed, 18 Jan 2017 14:40:44 +0800</lastBuildDate>
-    <atom:link href="http://this.lu/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://donglua.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Java 8 深入剖析 | Lambda 表示式</title>
-      <link>http://this.lu/post/java_8_lambda/</link>
+      <link>http://donglua.github.io/post/java_8_lambda/</link>
       <pubDate>Wed, 18 Jan 2017 14:40:44 +0800</pubDate>
       
-      <guid>http://this.lu/post/java_8_lambda/</guid>
+      <guid>http://donglua.github.io/post/java_8_lambda/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;1-lambda-表达式介绍&#34;&gt;1. Lambda 表达式介绍&lt;/h1&gt;
@@ -116,10 +116,10 @@ Arrays.sort(cities, String::compareToIgnoreCase);
     
     <item>
       <title>OpenGrok 部署</title>
-      <link>http://this.lu/post/opengrok-deploy/</link>
+      <link>http://donglua.github.io/post/opengrok-deploy/</link>
       <pubDate>Thu, 12 Jan 2017 23:55:08 +0800</pubDate>
       
-      <guid>http://this.lu/post/opengrok-deploy/</guid>
+      <guid>http://donglua.github.io/post/opengrok-deploy/</guid>
       <description>&lt;p&gt;
 &amp;gt; 环境：Debian 8&lt;/p&gt;
 
@@ -238,10 +238,10 @@ server {
     
     <item>
       <title>Java中的重排序和 volatile 关键字</title>
-      <link>http://this.lu/post/jmm-volatile/</link>
+      <link>http://donglua.github.io/post/jmm-volatile/</link>
       <pubDate>Fri, 23 Dec 2016 21:54:05 +0800</pubDate>
       
-      <guid>http://this.lu/post/jmm-volatile/</guid>
+      <guid>http://donglua.github.io/post/jmm-volatile/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;一-内存模型基础&#34;&gt;一、内存模型基础&lt;/h2&gt;
@@ -499,10 +499,10 @@ y = -1;        //语句5
     
     <item>
       <title>Dex 文件结构</title>
-      <link>http://this.lu/post/structure-of-dex-file/</link>
+      <link>http://donglua.github.io/post/structure-of-dex-file/</link>
       <pubDate>Wed, 16 Nov 2016 23:13:34 +0800</pubDate>
       
-      <guid>http://this.lu/post/structure-of-dex-file/</guid>
+      <guid>http://donglua.github.io/post/structure-of-dex-file/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;1-dex-文件&#34;&gt;1. Dex 文件&lt;/h2&gt;
