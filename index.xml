@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Donglua</title>
+    <link>http://this.lu/index.xml</link>
+    <description>Recent content on Donglua</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 18 Jan 2017 14:40:44 +0800</lastBuildDate>
+    <atom:link href="http://this.lu/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Java 8 深入剖析 | Lambda 表示式</title>
+      <link>http://this.lu/post/java_8_lambda/</link>
+      <pubDate>Wed, 18 Jan 2017 14:40:44 +0800</pubDate>
+      
+      <guid>http://this.lu/post/java_8_lambda/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;1-lambda-表达式介绍&#34;&gt;1. Lambda 表达式介绍&lt;/h1&gt;
+
+&lt;p&gt;Lambda 表达式为 Java 添加了缺失的 函数式编程特性，使我们能将函数当作一等公民对待。&lt;/p&gt;
+
+&lt;p&gt;在将函数作为一等公民的语言中，Lambda 表达式的类型是函数。而在 Java 中，&lt;strong&gt;Lambda 表达式是对象&lt;/strong&gt;，他们必须依附于一类特别的对象类型 —— &lt;strong&gt;函数式接口（FunctionalInterface）&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;函数式接口
+* 如果一个接口只有一个抽象方法，那么该接口是一个函数式接口
+* 如果我们在某个接口上声明了 FunctionalInterface 注解，那么编译器就会按照函数式接口的定义来要求该接口
+* 如果一个接口只有一个抽象方法，但没有给该接口声明 FunctionalInterface 注解，那么编译器依旧会将该接口看成函数式接口&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Lamdba 表达式是一种匿名函数；它是没有声明的方法，即没有访问修饰符、返回值声明和名字。&lt;/p&gt;
+
+&lt;p&gt;Lambda 表达式的作用是传递行为，而不仅仅是值。提升了抽象层次，API 重用性更好，更加灵活。&lt;/p&gt;
+
+&lt;h1 id=&#34;2-lambda-表示式基本语法&#34;&gt;2. Lambda 表示式基本语法&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;(arg1, arg2...) -&amp;gt; { body }
+
+(type1 arg1, type2 arg2...) -&amp;gt; { body }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;示例：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;(int a, int b) -&amp;gt; { return a + b; }&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;(String s) -&amp;gt; System.out.println(s);&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;a -&amp;gt; return a * a;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;() -&amp;gt; 43;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;() -&amp;gt; { return 3.14; }&lt;/code&gt;
+&amp;gt; 1. 一个 Lambda 表达式可以有零个或多个参数
+&amp;gt; 2. 参数的类型可以明确声明，也可以根据上下文来推断。比如&lt;code&gt;(String s)&lt;/code&gt;可以省略为&lt;code&gt;(s)&lt;/code&gt;
+&amp;gt; 3. 所有参数须包含在圆括号内，参数之间用逗号相隔。当只有一个参数且其类型可推导时，圆括号可省略，比如 &lt;code&gt;a -&amp;gt; return a * a;&lt;/code&gt;
+&amp;gt; 4. 空圆括号代表参数集为空。比如 &lt;code&gt;() -&amp;gt; 43;&lt;/code&gt;
+&amp;gt; 5. Lambda 表达式的主体可包含零条或多条语句。如果 Lambda 表达式的主体只有一条语句，花括号&lt;code&gt;{}&lt;/code&gt;可省略。匿名函数的返回值类型与该主体表达式一致。
+&amp;gt; 6. 如果 Lambda 表达式的主体包含一条以上语句，则表达式必须包含在花括号&lt;code&gt;{}&lt;/code&gt;中（形成代码块）。匿名函数的返回值类型与代码块的返回类型一致，若没有则为空。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;3-方法引用&#34;&gt;3. 方法引用&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;方法引用（Method References）实际上是 Lambda 表达式的一种语法糖。我可以将方法引用看作是一个“函数指针”（指向一个函数的指针）。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;list.forEach(item -&amp;gt; System.out.println(item))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以改为使用方法引用：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;list.forEach(System.out::println)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;方法引用的四种类型&#34;&gt;方法引用的四种类型：&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;类名::静态方法名&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;public class Person {
+    String name;
+    LocalDate birthday;
+    public static int compareByAge(Person a,Person b){
+        return a.birthday.compareTo(b.birthday);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;Arrays.sort(people, Person::compareByAge);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;对象::实例方法名&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;list.forEach(System.out::println)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;类名::实例方法名&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;String[] cities = { &amp;quot;guangdong&amp;quot;, &amp;quot;hunan&amp;quot;, &amp;quot;hebei&amp;quot;, &amp;quot;beijing&amp;quot; };
+Arrays.sort(cities, String::compareToIgnoreCase);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;构造方法引用&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;String::new
+&lt;/code&gt;&lt;/pre&gt;</description>
+    </item>
+    
+    <item>
+      <title>OpenGrok 部署</title>
+      <link>http://this.lu/post/opengrok-deploy/</link>
+      <pubDate>Thu, 12 Jan 2017 23:55:08 +0800</pubDate>
+      
+      <guid>http://this.lu/post/opengrok-deploy/</guid>
+      <description>&lt;p&gt;
+&amp;gt; 环境：Debian 8&lt;/p&gt;
+
+&lt;h2 id=&#34;1-安装-jdk-和-tomcat&#34;&gt;1. 安装 JDK 和 Tomcat&lt;/h2&gt;
+
+&lt;p&gt;Add Java 8 PPA&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo vim /etc/apt/sources.list.d/java-8-debian.list
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;添加以下内容&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;导入 GPG key&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;安装 JDK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get update
+sudo apt-get install oracle-java8-installer
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;验证是否安装成功&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;java -version
+java version &amp;quot;1.8.0_111&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_111-b14)
+Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;安装 Tomcat&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install tomcat8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;配置环境变量才能启动 Tomcat&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export CATALINA_HOME=/usr/share/tomcat8/
+export OPENGROK_TOMCAT_BASE=$CATALINA_HOME
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;安装 tomcat 管理程序、文档（可选）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install tomcat8-admin tomcat8-examples tomcat8-docs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-安装-opengrok&#34;&gt;2. 安装 OpenGrok&lt;/h2&gt;
+
+&lt;p&gt;下载&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;wget https://github.com/OpenGrok/OpenGrok/files/631110/opengrok-0.13-rc5.zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;解压&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;unzip opengrok-0.13-rc5.zip
+tar xvf opengrok-0.13-rc5.tar.gz -C /var/
+cd /var
+mv /var/opengrok-0.13-rc5 opengrok
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;部署 opengrok&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./var/opengrok/bin/OpenGrok deploy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;建立索引&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir /var/opengrok/src
+./var/opengrok/bin/OpenGrok index
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最后 浏览器打开 &lt;host&gt;:8080/source 即可看到OpenGrok 的界面。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://upload-images.jianshu.io/upload_images/11626-93a3a3294beed8d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;3-使用-nginx-作为反向代理&#34;&gt;3. 使用 Nginx 作为反向代理&lt;/h2&gt;
+
+&lt;p&gt;安装 Nginx&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;配置文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;upstream backend {
+    server 127.0.0.1:8080;
+}
+
+server {
+  listen 80;
+  server_name source;
+  root /var/lib/tomcat8/webapps/;
+  index index.jsp index.html index.htm;
+
+  location / {
+     proxy_pass  http://backend/source/;
+  }
+
+  location  ~ ^/source/(.*) {
+     return 301  /$1?$args;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;4-参考&#34;&gt;4. 参考&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://mazhuang.org/2016/12/14/rtfsc-with-opengrok/&#34; target=&#34;_blank&#34;&gt;搭建大型源码阅读环境——使用 OpenGrok&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java中的重排序和 volatile 关键字</title>
+      <link>http://this.lu/post/jmm-volatile/</link>
+      <pubDate>Fri, 23 Dec 2016 21:54:05 +0800</pubDate>
+      
+      <guid>http://this.lu/post/jmm-volatile/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;一-内存模型基础&#34;&gt;一、内存模型基础&lt;/h2&gt;
+
+&lt;p&gt;1、内存模型描述的是程序中各变量（线程共享变量）的访问规则，以及在实际计算机系统中将变量存储到内存和从内存读取出变量这样的低层细节。
+2、Jvm系统中存在一个&lt;strong&gt;主内存&lt;/strong&gt;(Main Memory或Java Heap Memory)，Java中所有变量都储存在主存中，对于所有线程都是共享的。
+3、每条线程都有自己的&lt;strong&gt;工作内存&lt;/strong&gt;(Working Memory)，工作内存中保存的是主存中某些变量的拷贝，线程对所有变量的操作都是在工作内存中进行，线程之间无法相互直接访问，变量传递均需要通过主存完成。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://upload-images.jianshu.io/upload_images/11626-bd5351d628eff143.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&#34; alt=&#34;http://ogkb67oc8.bkt.clouddn.com/6F4EED849DDA6CD470E0C934FC251466.png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;x = 0;
+线程A：x = 1;
+线程B：y = x;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;线程A与线程B的通信过程如下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;首先，线程A把本地内存A中更新过的共享变量刷新到主内存中去&lt;/li&gt;
+&lt;li&gt;然后，线程B到主内存中去读取线程A之前已更新过的共享变量&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://upload-images.jianshu.io/upload_images/11626-16bcad54fef86464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&#34; alt=&#34;http://ogkb67oc8.bkt.clouddn.com/12085E2E782D71368878CA2008EB5B91.png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;从整体来看，这两个步骤实质上是线程A在向线程B发送消息，而且这个通信过程必须要经过主内存。JMM(Java Memory Model)通过控制主内存与每个线程的本地内存之间的交互，来为java程序员提供内存可见性保证。
+&amp;gt; 可见性：一个线程对共享变量的修改能够及时的被其他线程看见&lt;/p&gt;
+
+&lt;h2 id=&#34;二-重排序&#34;&gt;二、重排序&lt;/h2&gt;
+
+&lt;h3 id=&#34;为什么要重排序&#34;&gt;为什么要重排序&lt;/h3&gt;
+
+&lt;p&gt;现在的CPU一般采用流水线来执行指令。一个指令的执行被分成：取指、译码、访存、执行、写回、等若干个阶段。然后，多条指令可以同时存在于流水线中，同时被执行。&lt;/p&gt;
+
+&lt;p&gt;指令流水线并不是串行的，并不会因为一个耗时很长的指令在“执行”阶段呆很长时间，而导致后续的指令都卡在“执行”之前的阶段上。&lt;/p&gt;
+
+&lt;p&gt;重排序的目的是为了性能。&lt;/p&gt;
+
+&lt;p&gt;Example:
+理想情况下：
+过程A：cpu0—写入1—&amp;gt; bank0；
+过程B：cpu0—写入2—&amp;gt; bank1；
+如果bank0状态为busy, 则A过程需要等待
+如果进行重排序，则直接可以先执行B过程。&lt;/p&gt;
+
+&lt;h3 id=&#34;数据依赖性&#34;&gt;数据依赖性&lt;/h3&gt;
+
+&lt;p&gt;如果两个操作访问同一个变量，且这两个操作中有一个为写操作，此时这两个操作之间就存在&lt;strong&gt;数据依赖性&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;分为下面三种情况：&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;名称&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;写后读&lt;/td&gt;
+&lt;td&gt;a = 1; b = a;&lt;/td&gt;
+&lt;td&gt;写一个变量后再读这个位置&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;写后写&lt;/td&gt;
+&lt;td&gt;a = 1; a = 2;&lt;/td&gt;
+&lt;td&gt;写一个变量后再写这个变量&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;读后写&lt;/td&gt;
+&lt;td&gt;a = b; b = 1;&lt;/td&gt;
+&lt;td&gt;读一个变量后再写这个变量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;上面三种情况，只要重排序两个操作的执行顺序，程序的执行结果将会被改变。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;所以有数据依赖性的语句不能进行重排序。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;as-if-serial&#34;&gt;as-if-serial&lt;/h3&gt;
+
+&lt;p&gt;as-if-serial 语义的意思指：不管怎么重排序（编译器和处理器为了提高并行度），（单线程）程序的执行结果不能被改变。编译器，runtime 和处理器都必须遵守 as-if-serial 语义。&lt;/p&gt;
+
+&lt;p&gt;编译器和处理器不会对存在数据依赖关系的操作做重排序，因为这种重排序会改变执行结果。但是，如果操作之间不存在数据依赖关系，这些操作可能被编译器和处理器重排序。&lt;/p&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;double pi  = 3.14;        // Ⓐ
+double r   = 1.0;         // Ⓑ  
+double area = pi * r * r; // Ⓒ
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ⓐ -&amp;gt; Ⓑ -&amp;gt; Ⓒ   按程序顺序的执行结果：area = 3.14
+Ⓑ -&amp;gt; Ⓐ -&amp;gt; Ⓒ   按重排序后的执行结果：area = 3.14&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;as-if-serial语义把单线程程序保护了起来，遵守as-if-serial语义的编译器，写单线程的程序员有一个幻觉：单线程程序是按程序写的顺序来执行的。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;happens-before-规则&#34;&gt;happens-before 规则&lt;/h3&gt;
+
+&lt;p&gt;语义：如果A先发生于B，那么A所做的所有改变都能被B看到&lt;/p&gt;
+
+&lt;p&gt;遵循的规则&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;程序顺序规则：一个线程中的每个操作，happens- before 于该线程中的任意后续操作。&lt;/li&gt;
+&lt;li&gt;监视器锁规则：对一个监视器锁的解锁，happens- before 于随后对这个监视器锁的加锁。&lt;/li&gt;
+&lt;li&gt;volatile变量规则：对一个volatile域的写，happens- before 于任意后续对这个volatile域的读。&lt;/li&gt;
+&lt;li&gt;传递性：如果A happens- before B，且B happens- before C，那么A happens- before C。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;重排序对多线程的影响&#34;&gt;重排序对多线程的影响&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;class ReorderExample {
+    int a = 0;
+    boolean flag = false;
+
+    public void writer() {
+        a = 1;                   //1
+        flag = true;             //2
+    }
+
+    Public void reader() {
+        if (flag) {              //3
+            int i =  a * a;      //4
+            ……
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;flag为标志位，表示a有没有被写入，当A线程执行 writer 方法，B线程执行 reader 方法，线程B在执行4操作的时候，能否看到线程A对a的写入操作？&lt;/p&gt;
+
+&lt;p&gt;答案是: 不一定！&lt;/p&gt;
+
+&lt;p&gt;由于操作1和操作2没有数据依赖关系，编译器和处理器可以对这两个操作重排序。&lt;/p&gt;
+
+&lt;p&gt;如果操作1和操作2做了重排序，程序执行时，线程A首先写标记变量 flag，随后线程 B 读这个变量。由于条件判断为真，线程 B 将读取变量a。此时，变量 a 还根本没有被线程 A 写入，在这里多线程程序的语义被重排序破坏了！&lt;/p&gt;
+
+&lt;h2 id=&#34;三-volatile-关键字&#34;&gt;三、volatile 关键字&lt;/h2&gt;
+
+&lt;h3 id=&#34;两层语义&#34;&gt;两层语义&lt;/h3&gt;
+
+&lt;p&gt;一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile 修饰之后，那么就具备了两层语义：&lt;/p&gt;
+
+&lt;p&gt;1、保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。&lt;/p&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;// 线程1
+boolean stop = false;
+while(!stop){
+    doSomething();
+}
+// 线程2
+stop = true;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先看这段代码会完全运行正确么？即一定会将线程中断么？
+答案是：不一定！&lt;/p&gt;
+
+&lt;p&gt;线程1在运行的时候，会将 stop 变量的值拷贝一份放在自己的工作内存当中。那么当线程2更改了 stop 变量的值之后，但是还没来得及写入主存当中，线程2转去做其他事情了，那么线程1由于不知道线程2对 stop 变量的更改，因此还会一直循环下去。&lt;/p&gt;
+
+&lt;p&gt;如果加上 volatile 则不一样：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使用 volatile 关键字会强制将修改的值立即写入主存。&lt;/li&gt;
+&lt;li&gt;使用 volatile 关键字的话，当线程2进行修改时，会导致线程1的工作内存中缓存变量 stop 的缓存行无效。&lt;/li&gt;
+&lt;li&gt;由于线程1的工作内存中缓存变量 stop 的缓存行无效，所以线程1再次读取变量 stop 的值时会去主存读取。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2、禁止进行指令重排序。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;当程序执行到 volatile变量的读操作或者写操作时，在其前面的操作的更改肯定全部已经进行，且结果已经对后面的操作可见；在其后面的操作肯定还没有进行；&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;在进行指令优化时，不能将在对 volatile 变量访问的语句放在其后面执行，也不能把 volatile 变量后面的语句放到其前面执行。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;//x、y为非volatile变量
+//flag为volatile变量
+
+x = 2;         //语句1
+y = 0;         //语句2
+flag = true;   //语句3
+x = 4;         //语句4
+y = -1;        //语句5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;由于 flag 变量为 volatile 变量，那么在进行指令重排序的过程的时候，不会将语句3放到语句1、语句2前面，也不会讲语句3放到语句4、语句5后面。但是要注意语句1和语句2的顺序、语句4和语句5的顺序是不作任何保证的。&lt;/p&gt;
+
+&lt;p&gt;并且 volatile 关键字能保证，执行到语句3时，语句1和语句2必定是执行完毕了的，且语句1和语句2的执行结果对语句3、语句4、语句5是可见的。&lt;/p&gt;
+
+&lt;h3 id=&#34;volatile-能保证原子性吗&#34;&gt;volatile 能保证原子性吗？&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;不能&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Java&#34;&gt;public class Test {
+    public volatile int inc = 0;
+    public void increase() {
+        inc++;
+    }
+    public static void main(String[] args) {
+        final Test test = new Test();
+        for(int i = 0; i &amp;lt; 10; i++) {
+            new Thread() {
+                public void run() {
+                    for(int j = 0; j&amp;lt; 1000; j++)
+                        test.increase();
+                };
+            }.start();
+        }
+        while(Thread.activeCount() &amp;gt; 1)
+            //保证前面的线程都执行完
+            Thread.yield();
+        System.out.println(test.inc);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这段程序的输出结果是多少？也许有些朋友认为是10000。但是事实上运行它会发现每次运行结果都不一致，都是一个小于10000的数字。&lt;/p&gt;
+
+&lt;p&gt;原因在于，自增操作是不具备原子性的，它包括读取变量的原始值、进行加1操作、写入工作内存。那么就是说自增操作的三个子操作可能会分割开执行，就有可能导致下面这种情况出现：&lt;/p&gt;
+
+&lt;p&gt;线程1对变量进行自增操作：线程1先读取变量inc的原始值，然后线程1被阻塞了（还没有 inc 的值）；&lt;/p&gt;
+
+&lt;p&gt;然后线程2对变量进行自增操作：线程2也去读取变量inc的原始值，由于线程1只是对变量inc进行读取操作，而没有对变量进行修改操作，所以不会导致线程2的工作内存中缓存变量inc的缓存行无效，所以线程2会直接去主存读取inc的值，发现inc的值时10，然后进行加1操作，并把11写入工作内存，最后写入主存。&lt;/p&gt;
+
+&lt;p&gt;然后线程1接着进行加1操作，由于已经读取了inc的值，此时线程1的工作内存中inc的值仍然为10，所以线程1对inc进行加1操作后inc的值为11，然后将11写入工作内存，最后写入主存。&lt;/p&gt;
+
+&lt;p&gt;那么两个线程分别进行了一次自增操作后，inc只增加了1。&lt;/p&gt;
+
+&lt;p&gt;根源就在这里，自增操作不是原子性操作。&lt;/p&gt;
+
+&lt;h2 id=&#34;四-参考资料&#34;&gt;四、参考资料&lt;/h2&gt;
+
+&lt;p&gt;《深入理解Java虚拟机》&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Dex 文件结构</title>
+      <link>http://this.lu/post/structure-of-dex-file/</link>
+      <pubDate>Wed, 16 Nov 2016 23:13:34 +0800</pubDate>
+      
+      <guid>http://this.lu/post/structure-of-dex-file/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;1-dex-文件&#34;&gt;1. Dex 文件&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Dex（Dalivk Executable）文件是 Android 系统可执行文件，包含应用程序的全部操作指令以及运行时数据。&lt;/li&gt;
+&lt;li&gt;虚拟机在执行一个应用程序时，会实时地根据程序需要从 Dex 文件中读取相应的数据以保证程序的正确运行。&lt;/li&gt;
+&lt;li&gt;为了运行在资源有限的 Android 系统中，标准的 Java 文件在经过编译后，还需要通过 dx 工具将编译生成的 class 文件整合成一个 Dex 文件。这样使得文件结构十分紧凑，减少了冗余，也提高了类的查找速度。
+&lt;img src=&#34;http://ogkb67oc8.bkt.clouddn.com/Groupjava_to_dex.png&#34; alt=&#34;java to dex&#34; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;如何将&lt;code&gt;Hello.java&lt;/code&gt;编译成一个 .dex 文件：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;pubic class Hello {
+  public static void main(String[] args) {
+    System.out.println(&amp;quot;Hello, world&amp;quot;);      
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;执行 &lt;code&gt;javac Hello.java&lt;/code&gt; 生成 Hello.class 文件&lt;/p&gt;
+
+&lt;p&gt;执行 &lt;code&gt;dx --dex --output=Hello.dex Hello.class&lt;/code&gt; 把 Hello.class 编译成 Hello.dex 文件&lt;/p&gt;
+
+&lt;h2 id=&#34;2-dex-文件的结构和特点&#34;&gt;2.Dex 文件的结构和特点&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://ogkb67oc8.bkt.clouddn.com/dex_file.png&#34; alt=&#34;dex file&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Dex 文件的结构，实际上就是由多个不同的结构体数据以首尾相接的方式拼凑而成。Dex 文件的定义在源码中的&lt;code&gt;AOSP/dalvik/libdex/DexFile.h&lt;/code&gt;文件中，主要结构如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-C++&#34;&gt;struct DexFile {
+  const DexHeader*    pHeader;
+  const DexStringId*  pStringIds;
+  const DexTypeId*    pTypeIds;
+  const DexFieldId*   pFieldIds;
+  const DexMethodId*  pMethodIds;
+  const DexProtoId*   pProtoIds;
+  const DexClassDef*  pClassDefs;
+  const DexLink*      pLinkData;
+
+  ...
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先介绍一下各部分数据的排列方式和主要功能：&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;数据名称&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;header&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;文件的头部，记录 Dex 文件的相关属性&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;strnig_ids&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;字符数据索引，记录了各个字符在数据区的地址偏移量&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;type_ids&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;类型数据索引，记录了各个类型的字符串索引&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;proto_ids&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;原型数据索引，记录方法声明的字符串、返回类型字符串、参数列表&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;field_ids&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;字段数据索引，记录了所属类，声明类型以及方法名等信息&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;method_ids&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;类方法声明，记录方法所属类名、方法声明、以及该方法名等信息&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;class_defs&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;类定义数据，记录了指定类各类信息，包括接口、超类、类数据偏移量等&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;link_data&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;连接数据区&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;3-各部分结构简介&#34;&gt;3. 各部分结构简介&lt;/h2&gt;
+
+&lt;h3 id=&#34;3-1-header&#34;&gt;3.1 header&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;header 是 Dex 文件的文件头，记录了 Dex 文件的基本信息及大致的数据分布。&lt;/li&gt;
+&lt;li&gt;每一项数据所占用的内存空间是相应固定的，总长度固定为 0x70。&lt;/li&gt;
+&lt;li&gt;虚拟机在处理 Dex 文件时，只需根据固定的规则读取文件头，即可获取目标 Dex 文件的大致信息。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;3-2-string-ids&#34;&gt;3.2 string_ids&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;这一区域存储的是 Dex 文件字符串资源的索引信息，也就是在 Dex 文件数据区所在的真实物理偏移量。&lt;/li&gt;
+&lt;li&gt;在 Dex 文件中, 每个字符串都对应一个 DexStringId 数据结构, 该数据结构也是在 &lt;code&gt;dalvik/libdex/DexFile.h&lt;/code&gt;文件中定义，只有一个成员变量。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;struct DexStringId {
+  u4 stringDataOff; /* 在Dex文件中的实际偏移量 */
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;读取数据的时候，将 Dex 文件在内存的起始地址加上这个偏移量就得到该字符串在内存中的物理地址。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;3-3-type-ids&#34;&gt;3.3 type_ids&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;这一区域存储的是类型资源的索引信息。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dalvik/libdex/DexFile.h&lt;/code&gt; 也定义了一个 DexTypeId 来存储这部分信息。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;struct DexTypeId {
+  u4  descriptorIdx; /* 指向字符串索引表 */
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;在 Dex 文件中, 类型是以字符串的形式保存在数据区中的, 因此, &lt;code&gt;descriptorIdx&lt;/code&gt; 所保存的是目标类型在字符串索引表中的序列号。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;3-4-proto-ids&#34;&gt;3.4 proto_ids&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;存储的是方法原型（method prototype）资源的索引信息。&lt;/li&gt;
+&lt;li&gt;对应源码中的&lt;code&gt;DexProtoId&lt;/code&gt;数据结构，前两个变量代表的真实资源都是一个字符串，分别表示方法的声明和返回类型。parametersOff 的真实资源是一个 DexTypeList 数据结构。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;struct DexProtoId {
+    u4  shortyIdx; /* 方法声明字符串，指向字符串索引表s */
+    u4  returnTypeIdx; /* 方法返回类型，指向字符串索引表 */
+    u4  parametersOff; /* 参数列表，指向DexTypeList数据结构的偏移地址 */
+};
+
+struct DexTypeItem {
+    u2  typeIdx; /* 参数的类型，指向 DexTypeId 索引表 */
+};
+
+struct DexTypeList {
+    u4  size;  /* DexTypeItem 的个数 */
+    DexTypeItem list[1]; /* DexTypeItem 数据结构列表 */
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;DexProtoId&lt;/code&gt;的成员变量都是表示数据的偏移地址，所以即使&lt;code&gt;DexTypeItem&lt;/code&gt;数量不确定，&lt;code&gt;DexProtoId&lt;/code&gt;是一个固定值12B。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;3-5-field-ids&#34;&gt;3.5 field_ids&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;存储的是字段资源的索引信息。&lt;/li&gt;
+&lt;li&gt;对应源码中的&lt;code&gt;DexFieldId&lt;/code&gt;数据结构&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;struct DexFieldId {
+    u2  classIdx; /* 所属类，指向一个DexTypeId */
+    u2  typeIdx; /* 该字段类型，指向一个DexTypeId */
+    u4  nameIdx; /* 字段名，指向一个DexStringId */
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;3-6-method-ids&#34;&gt;3.6 method_ids&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;存储的是类方法数据的索引信息。&lt;/li&gt;
+&lt;li&gt;对应源码中的&lt;code&gt;DexMethodId&lt;/code&gt;数据结构，&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;struct DexMethodId {
+    u2  classIdx; /* 所属类 */
+    u2  protoIdx; /* 方法原型类型，指向一个DexProtoId */
+    u4  nameIdx; /* 方法名，指向一个DexStringId */
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;3-7-class-defs&#34;&gt;3.7 class_defs&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;存储了一个类所需的资源。&lt;/li&gt;
+&lt;li&gt;对应源码的&lt;code&gt;DexClassDef&lt;/code&gt;数据结构&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;struct DexClassDef {
+  u4  classIdx;  /* 所属类，指向一个DexTypeId */
+  u4  accessFlags; /* 访问标示符 */
+  u4  superclassIdx; /* 超类，指向一个DexTypeId */
+  u4  interfacesOff; /* 实现的接口，指向一个DexTypeList */
+  u4  sourceFileIdx; /* 源文件名，指向一个DexStringId */
+  u4  annotationsOff; /* file offset to annotations_directory_item */
+  u4  classDataOff; /* 类数据，指向一个DexClassData */
+  u4  staticValuesOff; /* file offset to DexEncodedArray */
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;参考资料&#34;&gt;参考资料&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.blogfshare.com/dex-format.html&#34; target=&#34;_blank&#34;&gt;http://www.blogfshare.com/dex-format.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.zybuluo.com/dodola/note/554061&#34; target=&#34;_blank&#34;&gt;https://www.zybuluo.com/dodola/note/554061&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://source.android.com/devices/tech/dalvik/dex-format.html&#34; target=&#34;_blank&#34;&gt;https://source.android.com/devices/tech/dalvik/dex-format.html&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

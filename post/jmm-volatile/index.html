@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1">
+
+  
+  
+  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  
+
+  
+  <title>Java中的重排序和 volatile 关键字</title>
+
+  
+  
+  <link rel="stylesheet" href="http://this.lu/css/hugo-octopress.css">
+
+  
+  
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+  
+  <link href="http://this.lu/favicon.png" rel="icon">
+
+  
+  
+  
+
+  
+
+  <meta name="description" content="Stop Stopping">
+  <meta name="keywords" content="">
+
+  <meta name="author" content="东东鲁">
+
+  
+  <meta name="generator" content="Hugo 0.17" />
+
+  
+  
+
+</head>
+<body>
+
+
+<header role="banner"><hgroup>
+  
+  <h1><a href="http://this.lu/">Donglua</a></h1>
+    <h2></h2>
+</hgroup></header>
+
+
+<nav role="navigation">
+
+<ul class="main-navigation">
+  
+  
+    
+      <li><a href="http://this.lu/" title="Home">Home</a></li>
+    
+  
+</ul>
+
+
+<ul class="subscription">
+  
+    
+        <a href="http://this.lu/index.xml" target="_blank" type="application/rss+xml" title="RSS"><i class="fa fa-rss-square fa-lg"></i></a>
+    
+  
+
+</ul>
+
+
+</nav>
+
+
+<div id="main">
+  <div id="content">
+    <div>
+      <article class="hentry" role="article">
+
+        
+        
+
+<header>
+    <p class="meta">Dec 23, 2016
+         - 2 minute read 
+         - <a href="http://this.lu/post/jmm-volatile/#disqus_thread">Comments</a>
+
+        
+    </p>
+    <h1 class="entry-title">
+         Java中的重排序和 volatile 关键字 
+    </h1>
+</header>
+
+
+        <div class="entry-content">
+          
+          
+          
+          <p></p>
+
+<h2 id="一-内存模型基础">一、内存模型基础</h2>
+
+<p>1、内存模型描述的是程序中各变量（线程共享变量）的访问规则，以及在实际计算机系统中将变量存储到内存和从内存读取出变量这样的低层细节。
+2、Jvm系统中存在一个<strong>主内存</strong>(Main Memory或Java Heap Memory)，Java中所有变量都储存在主存中，对于所有线程都是共享的。
+3、每条线程都有自己的<strong>工作内存</strong>(Working Memory)，工作内存中保存的是主存中某些变量的拷贝，线程对所有变量的操作都是在工作内存中进行，线程之间无法相互直接访问，变量传递均需要通过主存完成。</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/11626-bd5351d628eff143.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="http://ogkb67oc8.bkt.clouddn.com/6F4EED849DDA6CD470E0C934FC251466.png" /></p>
+
+<p>Example:</p>
+
+<pre><code>x = 0;
+线程A：x = 1;
+线程B：y = x;
+</code></pre>
+
+<p>线程A与线程B的通信过程如下：</p>
+
+<ul>
+<li>首先，线程A把本地内存A中更新过的共享变量刷新到主内存中去</li>
+<li>然后，线程B到主内存中去读取线程A之前已更新过的共享变量</li>
+</ul>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/11626-16bcad54fef86464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="http://ogkb67oc8.bkt.clouddn.com/12085E2E782D71368878CA2008EB5B91.png" /></p>
+
+<p>从整体来看，这两个步骤实质上是线程A在向线程B发送消息，而且这个通信过程必须要经过主内存。JMM(Java Memory Model)通过控制主内存与每个线程的本地内存之间的交互，来为java程序员提供内存可见性保证。
+&gt; 可见性：一个线程对共享变量的修改能够及时的被其他线程看见</p>
+
+<h2 id="二-重排序">二、重排序</h2>
+
+<h3 id="为什么要重排序">为什么要重排序</h3>
+
+<p>现在的CPU一般采用流水线来执行指令。一个指令的执行被分成：取指、译码、访存、执行、写回、等若干个阶段。然后，多条指令可以同时存在于流水线中，同时被执行。</p>
+
+<p>指令流水线并不是串行的，并不会因为一个耗时很长的指令在“执行”阶段呆很长时间，而导致后续的指令都卡在“执行”之前的阶段上。</p>
+
+<p>重排序的目的是为了性能。</p>
+
+<p>Example:
+理想情况下：
+过程A：cpu0—写入1—&gt; bank0；
+过程B：cpu0—写入2—&gt; bank1；
+如果bank0状态为busy, 则A过程需要等待
+如果进行重排序，则直接可以先执行B过程。</p>
+
+<h3 id="数据依赖性">数据依赖性</h3>
+
+<p>如果两个操作访问同一个变量，且这两个操作中有一个为写操作，此时这两个操作之间就存在<strong>数据依赖性</strong>。</p>
+
+<p>分为下面三种情况：</p>
+
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>写后读</td>
+<td>a = 1; b = a;</td>
+<td>写一个变量后再读这个位置</td>
+</tr>
+
+<tr>
+<td>写后写</td>
+<td>a = 1; a = 2;</td>
+<td>写一个变量后再写这个变量</td>
+</tr>
+
+<tr>
+<td>读后写</td>
+<td>a = b; b = 1;</td>
+<td>读一个变量后再写这个变量</td>
+</tr>
+</tbody>
+</table>
+
+<p>上面三种情况，只要重排序两个操作的执行顺序，程序的执行结果将会被改变。</p>
+
+<ul>
+<li>所以有数据依赖性的语句不能进行重排序。</li>
+</ul>
+
+<h3 id="as-if-serial">as-if-serial</h3>
+
+<p>as-if-serial 语义的意思指：不管怎么重排序（编译器和处理器为了提高并行度），（单线程）程序的执行结果不能被改变。编译器，runtime 和处理器都必须遵守 as-if-serial 语义。</p>
+
+<p>编译器和处理器不会对存在数据依赖关系的操作做重排序，因为这种重排序会改变执行结果。但是，如果操作之间不存在数据依赖关系，这些操作可能被编译器和处理器重排序。</p>
+
+<p>Example:</p>
+
+<pre><code>double pi  = 3.14;        // Ⓐ
+double r   = 1.0;         // Ⓑ  
+double area = pi * r * r; // Ⓒ
+</code></pre>
+
+<p>Ⓐ -&gt; Ⓑ -&gt; Ⓒ   按程序顺序的执行结果：area = 3.14
+Ⓑ -&gt; Ⓐ -&gt; Ⓒ   按重排序后的执行结果：area = 3.14</p>
+
+<blockquote>
+<p>as-if-serial语义把单线程程序保护了起来，遵守as-if-serial语义的编译器，写单线程的程序员有一个幻觉：单线程程序是按程序写的顺序来执行的。</p>
+</blockquote>
+
+<h3 id="happens-before-规则">happens-before 规则</h3>
+
+<p>语义：如果A先发生于B，那么A所做的所有改变都能被B看到</p>
+
+<p>遵循的规则</p>
+
+<ul>
+<li>程序顺序规则：一个线程中的每个操作，happens- before 于该线程中的任意后续操作。</li>
+<li>监视器锁规则：对一个监视器锁的解锁，happens- before 于随后对这个监视器锁的加锁。</li>
+<li>volatile变量规则：对一个volatile域的写，happens- before 于任意后续对这个volatile域的读。</li>
+<li>传递性：如果A happens- before B，且B happens- before C，那么A happens- before C。</li>
+</ul>
+
+<h3 id="重排序对多线程的影响">重排序对多线程的影响</h3>
+
+<pre><code class="language-Java">class ReorderExample {
+    int a = 0;
+    boolean flag = false;
+
+    public void writer() {
+        a = 1;                   //1
+        flag = true;             //2
+    }
+
+    Public void reader() {
+        if (flag) {              //3
+            int i =  a * a;      //4
+            ……
+        }
+    }
+}
+</code></pre>
+
+<p>flag为标志位，表示a有没有被写入，当A线程执行 writer 方法，B线程执行 reader 方法，线程B在执行4操作的时候，能否看到线程A对a的写入操作？</p>
+
+<p>答案是: 不一定！</p>
+
+<p>由于操作1和操作2没有数据依赖关系，编译器和处理器可以对这两个操作重排序。</p>
+
+<p>如果操作1和操作2做了重排序，程序执行时，线程A首先写标记变量 flag，随后线程 B 读这个变量。由于条件判断为真，线程 B 将读取变量a。此时，变量 a 还根本没有被线程 A 写入，在这里多线程程序的语义被重排序破坏了！</p>
+
+<h2 id="三-volatile-关键字">三、volatile 关键字</h2>
+
+<h3 id="两层语义">两层语义</h3>
+
+<p>一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile 修饰之后，那么就具备了两层语义：</p>
+
+<p>1、保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。</p>
+
+<p>Example:</p>
+
+<pre><code class="language-Java">// 线程1
+boolean stop = false;
+while(!stop){
+    doSomething();
+}
+// 线程2
+stop = true;
+</code></pre>
+
+<p>先看这段代码会完全运行正确么？即一定会将线程中断么？
+答案是：不一定！</p>
+
+<p>线程1在运行的时候，会将 stop 变量的值拷贝一份放在自己的工作内存当中。那么当线程2更改了 stop 变量的值之后，但是还没来得及写入主存当中，线程2转去做其他事情了，那么线程1由于不知道线程2对 stop 变量的更改，因此还会一直循环下去。</p>
+
+<p>如果加上 volatile 则不一样：</p>
+
+<ul>
+<li>使用 volatile 关键字会强制将修改的值立即写入主存。</li>
+<li>使用 volatile 关键字的话，当线程2进行修改时，会导致线程1的工作内存中缓存变量 stop 的缓存行无效。</li>
+<li>由于线程1的工作内存中缓存变量 stop 的缓存行无效，所以线程1再次读取变量 stop 的值时会去主存读取。</li>
+</ul>
+
+<p>2、禁止进行指令重排序。</p>
+
+<ul>
+<li><p>当程序执行到 volatile变量的读操作或者写操作时，在其前面的操作的更改肯定全部已经进行，且结果已经对后面的操作可见；在其后面的操作肯定还没有进行；</p></li>
+
+<li><p>在进行指令优化时，不能将在对 volatile 变量访问的语句放在其后面执行，也不能把 volatile 变量后面的语句放到其前面执行。</p></li>
+</ul>
+
+<p>Example:</p>
+
+<pre><code class="language-Java">//x、y为非volatile变量
+//flag为volatile变量
+
+x = 2;         //语句1
+y = 0;         //语句2
+flag = true;   //语句3
+x = 4;         //语句4
+y = -1;        //语句5
+</code></pre>
+
+<p>由于 flag 变量为 volatile 变量，那么在进行指令重排序的过程的时候，不会将语句3放到语句1、语句2前面，也不会讲语句3放到语句4、语句5后面。但是要注意语句1和语句2的顺序、语句4和语句5的顺序是不作任何保证的。</p>
+
+<p>并且 volatile 关键字能保证，执行到语句3时，语句1和语句2必定是执行完毕了的，且语句1和语句2的执行结果对语句3、语句4、语句5是可见的。</p>
+
+<h3 id="volatile-能保证原子性吗">volatile 能保证原子性吗？</h3>
+
+<blockquote>
+<p>不能</p>
+</blockquote>
+
+<p>Example:</p>
+
+<pre><code class="language-Java">public class Test {
+    public volatile int inc = 0;
+    public void increase() {
+        inc++;
+    }
+    public static void main(String[] args) {
+        final Test test = new Test();
+        for(int i = 0; i &lt; 10; i++) {
+            new Thread() {
+                public void run() {
+                    for(int j = 0; j&lt; 1000; j++)
+                        test.increase();
+                };
+            }.start();
+        }
+        while(Thread.activeCount() &gt; 1)
+            //保证前面的线程都执行完
+            Thread.yield();
+        System.out.println(test.inc);
+    }
+}
+</code></pre>
+
+<p>这段程序的输出结果是多少？也许有些朋友认为是10000。但是事实上运行它会发现每次运行结果都不一致，都是一个小于10000的数字。</p>
+
+<p>原因在于，自增操作是不具备原子性的，它包括读取变量的原始值、进行加1操作、写入工作内存。那么就是说自增操作的三个子操作可能会分割开执行，就有可能导致下面这种情况出现：</p>
+
+<p>线程1对变量进行自增操作：线程1先读取变量inc的原始值，然后线程1被阻塞了（还没有 inc 的值）；</p>
+
+<p>然后线程2对变量进行自增操作：线程2也去读取变量inc的原始值，由于线程1只是对变量inc进行读取操作，而没有对变量进行修改操作，所以不会导致线程2的工作内存中缓存变量inc的缓存行无效，所以线程2会直接去主存读取inc的值，发现inc的值时10，然后进行加1操作，并把11写入工作内存，最后写入主存。</p>
+
+<p>然后线程1接着进行加1操作，由于已经读取了inc的值，此时线程1的工作内存中inc的值仍然为10，所以线程1对inc进行加1操作后inc的值为11，然后将11写入工作内存，最后写入主存。</p>
+
+<p>那么两个线程分别进行了一次自增操作后，inc只增加了1。</p>
+
+<p>根源就在这里，自增操作不是原子性操作。</p>
+
+<h2 id="四-参考资料">四、参考资料</h2>
+
+<p>《深入理解Java虚拟机》</p>
+        </div>
+        
+
+<footer>
+  <p class="meta">
+    <span class="byline author vcard">Posted by <span class="fn">东东鲁</span></span>
+    
+    <time>Dec 23, 2016</time>
+    
+    </span>
+  </p>
+
+  
+  
+
+  
+
+  <p class="meta">
+    
+        <a class="basic-alignment left" href="http://this.lu/post/structure-of-dex-file/" title="Dex 文件结构">Dex 文件结构</a>
+    
+
+    
+      <a class="basic-alignment right" href="http://this.lu/post/opengrok-deploy/" title="OpenGrok 部署">OpenGrok 部署</a>
+    
+  </p>
+  
+    
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    
+    
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'thislu';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    
+  
+</footer>
+
+      </article>
+    </div>
+    
+
+<aside class="sidebar thirds">
+  <section class="first odd">
+
+    
+
+    <p>
+      
+    </p>
+  </section>
+
+
+
+  
+  <ul class="sidebar-nav">
+    <li class="sidebar-nav-item">
+      <a target="_blank" href="//www.github.com/donglua" title="//www.github.com/donglua"><i class="fa fa-github fa-3x"></i></a>
+      
+      
+      
+       
+      
+      
+      
+      
+      
+      
+
+    
+    
+    </li>
+  </ul>
+
+  
+
+  
+
+  
+  
+  
+
+</aside>
+
+  </div>
+</div>
+
+<footer role="contentinfo">
+  <p>Copyright &copy; 2017 东东鲁 - <a href="http://this.lu/license/">License</a> -
+  <span class="credit">Powered by <a target="_blank" href="https://gohugo.io">Hugo</a> and <a target="_blank" href="https://github.com/parsiya/hugo-octopress/">Hugo-Octopress</a> theme.
+</p>
+
+</footer>
+
+
+</body>
+</html>
+
