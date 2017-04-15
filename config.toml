@@ -15,7 +15,7 @@ theme="hugo-octopress"
   description = "Stop Stopping"
   defaultDescription = "Stop Stopping"
 
-  author = "东东鲁"
+  author = "Donglua"
   colorscheme = "white"
   github = "//www.github.com/donglua"
   continueReadingText = "阅读全文"
